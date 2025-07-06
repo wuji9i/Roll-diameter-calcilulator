@@ -1,31 +1,53 @@
 <!DOCTYPE html>
 <html lang="ru">
-<head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/><title>Калькулятор диаметра рулона</title><style>body{font-family:Arial,sans-serif;max-width:400px;margin:auto;padding:20px}input,button{width:100%;padding:10px;margin:8px 0;font-size:16px}#result{margin-top:10px;font-weight:bold}</style></head>
+<head>
+  <meta charset="UTF-8" />
+  <title>Калькулятор рулона</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; max-width: 400px; margin: auto; }
+    input, button { width: 100%; padding: 10px; margin-top: 8px; font-size: 16px; }
+    label { margin-top: 10px; display: block; font-weight: bold; }
+    #result { margin-top: 15px; font-size: 18px; font-weight: bold; }
+  </style>
+</head>
 <body>
-<h2>Калькулятор внешнего диаметра рулона</h2>
-<label>Толщина (мм):</label><input type="number" id="thickness" step="any"/>
-<label>Ширина (мм):</label><input type="number" id="width" step="any"/>
-<label>Внутренний диаметр (мм):</label><input type="number" id="innerDiameter" step="any"/>
-<label>Масса рулона (кг):</label><input type="number" id="weight" step="any"/>
-<button onclick="calculate()">Рассчитать</button>
-<div id="result">Результат появится здесь</div>
-<script>
-function calculate(){
-  const t = parseFloat(document.getElementById("thickness").value);
-  const w = parseFloat(document.getElementById("width").value);
-  const dInner = parseFloat(document.getElementById("innerDiameter").value);
-  const m = parseFloat(document.getElementById("weight").value);
-  if(!t||!w||!dInner||!m){
-    document.getElementById("result").innerText = "Пожалуйста, заполните все поля.";
-    return;
-  }
-  const density = 7850;
-  const volume = m/density;
-  const area = volume/(t/1000);
-  const area_mm2 = area*1e6;
-  const dOuter = Math.sqrt((4*area_mm2/Math.PI)+dInner*dInner);
-  document.getElementById("result").innerText = "Внешний диаметр: " + dOuter.toFixed(2) + " мм";
-}
-</script>
+  <h2>Калькулятор внешнего диаметра рулона</h2>
+
+  <label>Толщина металла (мм):</label>
+  <input type="number" id="thickness" step="0.01">
+
+  <label>Ширина рулона (мм):</label>
+  <input type="number" id="width" step="0.1">
+
+  <label>Внутренний диаметр (мм):</label>
+  <input type="number" id="inner" step="1">
+
+  <label>Масса рулона (кг):</label>
+  <input type="number" id="mass" step="0.1">
+
+  <button onclick="calculate()">Рассчитать</button>
+
+  <div id="result">Результат появится здесь</div>
+
+  <script>
+    function calculate() {
+      const t = parseFloat(document.getElementById("thickness").value); // мм
+      const w = parseFloat(document.getElementById("width").value);     // мм
+      const dInner = parseFloat(document.getElementById("inner").value); // мм
+      const m = parseFloat(document.getElementById("mass").value);       // кг
+
+      if (!t || !w || !dInner || !m) {
+        document.getElementById("result").innerText = "Заполните все поля корректно.";
+        return;
+      }
+
+      const density = 7850; // кг/м³ (сталь)
+      const volume = m / density; // м³
+      const length = volume / ((t / 1000) * (w / 1000)); // м
+      const dOuter = Math.sqrt(Math.pow(dInner, 2) + (4 * length * (t / 1000)) / Math.PI); // мм
+
+      document.getElementById("result").innerText = "Внешний диаметр: " + dOuter.toFixed(2) + " мм";
+    }
+  </script>
 </body>
 </html>
